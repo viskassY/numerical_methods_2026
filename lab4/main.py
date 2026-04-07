@@ -24,14 +24,26 @@ def derivative_central(t, h):
 # -----------------------------
 h_values = [10**(-k) for k in range(1, 12)]
 errors = []
+errors_runge = []
+errors_aitken = []
 
 for h in h_values:
-    approx = derivative_central(t0, h)
-    errors.append(abs(approx - exact))
+    D_h = derivative_central(t0, h)
+    D_2h = derivative_central(t0, 2*h)
+    D_4h = derivative_central(t0, 4*h)
 
-# -----------------------------
+    # базова похибка
+    errors.append(abs(D_h - exact))
+
+    # Рунге
+    D_rr = D_h + (D_h - D_2h) / 3
+    errors_runge.append(abs(D_rr - exact))
+
+    # Ейткен
+    D_aitken = (D_2h**2 - D_4h * D_h) / (2*D_2h - (D_4h + D_h))
+    errors_aitken.append(abs(D_aitken - exact))
+
 # Фіксований крок
-# -----------------------------
 h = 0.001
 
 D_h = derivative_central(t0, h)
@@ -41,7 +53,7 @@ D_4h = derivative_central(t0, 4*h)
 
 
 # Рунге–Ромберг
-p = 2
+p = 2 # порядок точності
 #D_rr = D_h2 + (D_h2 - D_h) / (2**p - 1)
 D_rr = D_h + (D_h - D_2h) / 3
 
@@ -55,17 +67,18 @@ p_est = (1/np.log(2)) * np.log(abs((D_4h - D_2h)/(D_2h - D_h))) # розраху
 # -----------------------------
 t = np.linspace(0, 20, 200)
 
-# -----------------------------
-# ВСІ ГРАФІКИ В ОДНОМУ ПОЛОТНІ
-# -----------------------------
 plt.figure(figsize=(10, 10))
 
 # 1. Похибка
 plt.subplot(2, 1, 1)
-plt.loglog(h_values, errors, marker='o')
+plt.loglog(h_values, errors, marker='o', label="Центральна різниця")
+plt.loglog(h_values, errors_runge, marker='o', label="Рунге-Ромберг")
+plt.loglog(h_values, errors_aitken, marker='o', label="Ейткен")
+
 plt.title("Похибка vs крок")
 plt.xlabel("Крок диференціювання h")
 plt.ylabel("error")
+plt.legend()
 plt.grid()
 
 # 2. Функція
