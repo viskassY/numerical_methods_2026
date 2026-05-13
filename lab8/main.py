@@ -104,8 +104,8 @@ def parabol(x0, x1, x2, eps=1e-10, max_iter=100):
         if abs(x1 - x0) < 1e-15 or abs(x2 - x1) < 1e-15 or abs(x2 - x0) < 1e-15:
             return x2, i
 
-        a1 = (f1 - f0)/(x1 - x0)
-        a2 = ((f2 - f0)/(x2 - x0) - a1)/(x2 - x1)
+        a1 = (f1 - f0)/(x1 - x0) # нахил
+        a2 = ((f2 - f0)/(x2 - x0) - a1)/(x2 - x1) # вигин
 
         D = a1**2 - 4*f2*a2
         if D < 0:
@@ -158,7 +158,7 @@ def horner(coeffs, x):
 
 def derivative_coeffs(coeffs):
     n = len(coeffs)
-    return [coeffs[i]*(n-i-1) for i in range(n-1)]
+    return [coeffs[i]*(n-i-1) for i in range(n-1)] #коефіцієнт на степінь
 
 def read_coeffs(filename):
     with open(filename) as f:
